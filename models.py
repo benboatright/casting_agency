@@ -28,14 +28,14 @@ class Actors(db.Model):
 
     def insert(self):
         db.session.add(self)
-        db.session.commit(self)
+        db.session.commit()
 
     def delete(self):
         db.session.delete(self)
-        db.session.commit(self)
+        db.session.commit()
 
     def update(self):
-        db.session.commit(self)
+        db.session.commit()
 
 
 class Movies(db.Model):
@@ -51,11 +51,11 @@ class Movies(db.Model):
 
     def insert(self):
         db.session.add(self)
-        db.session.commit(self)
+        db.session.commit()
 
     def delete(self):
         db.session.delete(self)
-        db.session.commit(self)
+        db.session.commit()
 
     def update(self):
-        db.session.commit(self)
+        db.session.commit()
