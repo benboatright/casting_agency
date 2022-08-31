@@ -20,8 +20,42 @@ class Actors(db.Model):
     age = Column(Integer)
     gender = Column(String)
 
+    def __init__(self,id,name,age,gender):
+        self.id = id
+        self.name = name
+        self.age = age
+        self.gender = gender
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit(self)
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit(self)
+
+    def update(self):
+        db.session.commit(self)
+
+
 class Movies(db.Model):
     __tablename__ ='movies'
     id = Column(Integer,primary_key=True)
     title = Column(String)
     release_date = Column(DateTime)
+
+    def __init__(self,id,title,release_date):
+        self.id = id
+        self.title = title
+        self.release_date = release_date
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit(self)
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit(self)
+
+    def update(self):
+        db.session.commit(self)
