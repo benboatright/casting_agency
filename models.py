@@ -20,8 +20,7 @@ class Actors(db.Model):
     age = Column(Integer)
     gender = Column(String)
 
-    def __init__(self,id,name,age,gender):
-        self.id = id
+    def __init__(self,name,age,gender):
         self.name = name
         self.age = age
         self.gender = gender
@@ -44,8 +43,7 @@ class Movies(db.Model):
     title = Column(String)
     release_date = Column(DateTime)
 
-    def __init__(self,id,title,release_date):
-        self.id = id
+    def __init__(self,title,release_date):
         self.title = title
         self.release_date = release_date
 

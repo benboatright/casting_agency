@@ -1,5 +1,6 @@
 import json
 import os
+from platform import release
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -28,7 +29,7 @@ def create_app(test_config=None):
     # then append each dictionary to the list 
     for movie in all_movies:
       movie_dict = {
-        'success': 'True',
+        'success': True,
         'id': movie.id,
         'title': movie.title,
         'release_date': movie.release_date
@@ -48,7 +49,7 @@ def create_app(test_config=None):
     # then append each of the dictionaries to the list
     for actor in all_actors:
       actor_dict = {
-        'success' :'True',
+        'success' : True,
         'id' : actor.id,
         'name': actor.name,
         'age': actor.age,
@@ -67,13 +68,13 @@ def create_app(test_config=None):
     if movie is not None:
       movie.delete()
       return jsonify({
-        'success':'True',
+        'success': True,
         'id_deleted':id
       })
     # else, return the fail dictionary
     else:
       return jsonify({
-        'success':'False',
+        'success': False,
         'id':'The id provided is not in the table'
       })
 
@@ -86,17 +87,53 @@ def create_app(test_config=None):
     if actor is not None:
       actor.delete()
       return jsonify({
-        'success':'True',
+        'success': True,
         'id': id
       })
     # else, return the fail dictionary
     else:
       return jsonify({
-        'success': 'False',
+        'success': False,
         'id': 'The id provided is not in the table'
       })
 
-
+  # this endpoint posts a new movie to the table based on the request made
+  @app.route('/movies',methods=['POST'])
+  def add_movie():
+    movie = request.get_json() #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
+    if movie.get('title') is not None and movie.get('release_date') is not None: #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
+      new_movie = Movies(title=movie.get('title'),
+                         release_date=movie.get('release_date')) #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
+      new_movie.insert()
+      return jsonify({
+        'success': True,
+        'title':movie.get('title'), #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
+        'release_date':movie.get('release_date') #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
+      })
+    else:
+      return jsonify({
+        'success':False,
+      })
+  
+  # this endpoint posts a new actor to the table based on teh request
+  @app.route('/actors',methods=['POST'])
+  def add_actors():
+    actor = request.get_json() #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
+    if actor.get('name') is not None and actor.get('age') is not None and actor.get('gender') is not None: #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
+      new_actor = Actors(name=actor.get('name'),
+                         age=actor.get('age'),
+                         gender=actor.get('gender')) #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
+      new_actor.insert()
+      return jsonify({
+        'success': True,
+        'name':actor.get('name'), #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
+        'age':actor.get('age'), #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
+        'gender':actor.get('gender') #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
+      })
+    else:
+        return jsonify({
+          'success':False
+        })
   return app
 
 APP = create_app()
