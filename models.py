@@ -2,8 +2,14 @@
 from sqlalchemy import Column,Integer,String, DateTime #8/29/22 #Referenced Amy's lesson for datatypes #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0046/lessons/b957ba99-1c62-471c-8482-c18ac3d7943b/concepts/61e32678-d4aa-42f8-9767-050fef0ce9de
 from flask_sqlalchemy import SQLAlchemy
 
-database = 'casting_agency'
-uri = f'postgresql://benjaminboatright@localhost:5432/{database}' #8/29/22 #Referenced Amy's lesson on connecting to the database #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0046/lessons/b957ba99-1c62-471c-8482-c18ac3d7943b/concepts/b2093f89-9b28-4d97-a02c-a829315fd3e1
+#9/5/22 #referenced the code in the blog to hide secrets #https://dev.to/jakewitcher/using-env-files-for-environment%20#%20-variables-in-python-applications-55a1
+from dotenv import load_dotenv
+import os
+load_dotenv('.env')
+
+database = os.getenv('datbase')
+user_name = os.getenv('user_name')
+uri = f'postgresql://{user_name}@{database}' #8/29/22 #Referenced Amy's lesson on connecting to the database #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0046/lessons/b957ba99-1c62-471c-8482-c18ac3d7943b/concepts/b2093f89-9b28-4d97-a02c-a829315fd3e1
 
 db = SQLAlchemy()
 
