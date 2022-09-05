@@ -18,11 +18,13 @@ load_dotenv('.env')
 
 user_name = os.getenv('user_name')
 database = os.getenv('database')
+domain = os.getenv('domain')
+api = os.getenv('api')
 
 uri = f'postgresql://{user_name}@{database}' #8/29/22 #Referenced Amy's lesson on connecting to the database #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0046/lessons/b957ba99-1c62-471c-8482-c18ac3d7943b/concepts/b2093f89-9b28-4d97-a02c-a829315fd3e1
 
 # Authorization Methods
-# 9/5/22 #referenced this code to remember how to perform authorizations #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
+# 9/5/22 #referenced this code to perform get token #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
 # this method retreives the bearer token from a request submitted
 def retreive_token():
   # retreive the Authorization
@@ -41,6 +43,29 @@ def retreive_token():
   else:
     return token
 
+# Verify and Decode the JWT
+# 9/5/22 #referenced this code to verify and decode #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
+def ver_and_decode_jwt(token):
+  well_known_url = urlopen(f'https://{domain}/well-known/jwks.json')
+  well_known_data = json.loads(well_known_url.read())
+  unver_header = jwt.get_unverified_header(token)
+  rsa_key = {}
+  for key in well_known_data:
+    if key['kid'] == unver_header['kid']:
+      rsa_key = {
+        'kty':key['kty'],
+        'kid':key['kid'],
+        'use':key['use'],
+        'n':key['n'],
+        'e':key['e']
+      }
+  if rsa_key is not None:
+    try:
+      payload = jwt.decode(token,rsa_key,['RSA256'],api,issuer=f'https://{domain}/')
+      return payload
+    except:
+      abort(401)
+    
 
 def create_app(test_config=None):
   # create and configure the app
