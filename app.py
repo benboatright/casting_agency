@@ -134,6 +134,62 @@ def create_app(test_config=None):
         return jsonify({
           'success':False
         })
+  
+  # this endpoint patches a new movie
+  @app.route('/movies/<id>',methods=['PATCH'])
+  def edit_movie(id):
+    movie_request = request.get_json()
+    movie = Movies.query.get(id)
+
+    if movie_request.get('title') is not None or movie_request.get('release_date') is not None:
+      # determine the title to update
+      if movie_request.get('title') is not None:
+        movie.title = movie_request.get('title')
+      # determine the release date to update
+      if movie_request.get('release_date') is not None:
+        movie.release_date = movie_request.get('release_date')
+      # make the update
+      movie.update()
+      return jsonify({
+        'success':True,
+        'id':id
+      })
+    else:
+      return jsonify({
+        'success': False,
+        'id':id
+      })
+
+  # this enpoint patches a new actor
+  @app.route('/actors/<id>',methods=['PATCH'])
+  def edit_actor(id):
+    actor_request = request.get_json()
+    actor = Actors.query.get(id)
+
+    if actor_request.get('name') is not None or actor_request.get('age') is not None or actor_request.get('gender') is not None:
+      # determine the name
+      if actor_request.get('name') is not None:
+        actor.name = actor_request.get('name')
+      # determine the age
+      if actor_request.get('age') is not None:
+        actor.age = actor_request.get('age')
+      # determine the gender
+      if actor_request.get('gender') is not None:
+        actor.gender = actor_request.get('gender')
+      # update
+      actor.update()
+      return jsonify({
+        'success': True,
+        'id':id
+      })
+    else:
+      return jsonify({
+        'success':False,
+        'id':id
+      })
+
+    
+  
   return app
 
 APP = create_app()
