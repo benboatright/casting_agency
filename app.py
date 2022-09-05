@@ -46,11 +46,17 @@ def retreive_token():
 # Verify and Decode the JWT
 # 9/5/22 #referenced this code to verify and decode #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
 def ver_and_decode_jwt(token):
+  # set the well-known jwks.json url
   well_known_url = urlopen(f'https://{domain}/well-known/jwks.json')
+  # read the data from the well_known_url and change it to json
   well_known_data = json.loads(well_known_url.read())
+  # retreive the unverfiied header using the token
   unver_header = jwt.get_unverified_header(token)
+  # init the rsa_key
   rsa_key = {}
+  # run through all the keys in the data
   for key in well_known_data:
+    # if the 'kid' from one of the keys matches the 'kid from the unverified header, populate the rsa_key dictionary
     if key['kid'] == unver_header['kid']:
       rsa_key = {
         'kty':key['kty'],
@@ -59,6 +65,7 @@ def ver_and_decode_jwt(token):
         'n':key['n'],
         'e':key['e']
       }
+  # if the rsa_key was populated try to decode and return the payload
   if rsa_key is not None:
     try:
       payload = jwt.decode(token,rsa_key,['RSA256'],api,issuer=f'https://{domain}/')
