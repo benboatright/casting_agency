@@ -287,8 +287,6 @@ def create_app(test_config=None):
         'id':id
       })
 
-    
-  
   return app
 
 APP = create_app()
