@@ -1,18 +1,46 @@
+from crypt import methods
 import json
 import os
 from platform import release
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from urllib.request import urlopen #9/5/22 #referenced this code to remember how to perform authorizations #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
+from jose import jwt #9/5/22 #referenced this code to remember how to perform authorizations #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
+from functools import wraps #9/5/22 #referenced this code to remember how to perform authorizations #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
 from models import setup_db,Actors,Movies
 #9/5/22 #referenced the code in the blog to hide secrets #https://dev.to/jakewitcher/using-env-files-for-environment%20#%20-variables-in-python-applications-55a1
 from dotenv import load_dotenv
 load_dotenv('.env')
 
+# how to generate new tokens
+#https://dev-dy086z0n.us.auth0.com/authorize?audience=casting&response_type=token&client_id=z1jPPMPtpmyyDmrOFsNsRIH7rdHDdD9x&redirect_uri=http://localhost:8080/login-results
+
 user_name = os.getenv('user_name')
 database = os.getenv('database')
 
 uri = f'postgresql://{user_name}@{database}' #8/29/22 #Referenced Amy's lesson on connecting to the database #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0046/lessons/b957ba99-1c62-471c-8482-c18ac3d7943b/concepts/b2093f89-9b28-4d97-a02c-a829315fd3e1
+
+# Authorization Methods
+# 9/5/22 #referenced this code to remember how to perform authorizations #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
+# this method retreives the bearer token from a request submitted
+def retreive_token():
+  # retreive the Authorization
+  token_request = request.headers.get('Authorization')
+  # split the authorization and get the bearer phrase
+  bearer = token_request.split(' ')[0]
+  # split the authorization and get the token
+  token = token_request.split(' ')[1]
+  # if the authorization did not exist, abort 401
+  if token_request is None:
+    abort(401)
+  # if the authorization was not a bearer token, abort 401
+  elif bearer.lower() != 'bearer':
+    abort(401)
+  # return the token
+  else:
+    return token
+
 
 def create_app(test_config=None):
   # create and configure the app
@@ -20,9 +48,13 @@ def create_app(test_config=None):
   CORS(app)
   setup_db(app,uri)
 
-  @app.route('/')
+  @app.route('/',methods=['GET','POST']) 
   def test():
-    return 'Casting Agency'
+    if methods == 'GET':
+      return 'Casting Agency'
+    else:
+      token = retreive_token()
+      return f'{token}'
 
   # this endpoint gets all the movies form the data table
   @app.route('/movies',methods=['GET'])
