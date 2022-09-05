@@ -1,4 +1,3 @@
-from crypt import methods
 import json
 import os
 from platform import release
@@ -18,7 +17,7 @@ load_dotenv('.env')
 
 user_name = os.getenv('user_name')
 database = os.getenv('database')
-domain = os.getenv('domain')
+domain = os.getenv('auth_domain')
 api = os.getenv('api')
 
 uri = f'postgresql://{user_name}@{database}' #8/29/22 #Referenced Amy's lesson on connecting to the database #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0046/lessons/b957ba99-1c62-471c-8482-c18ac3d7943b/concepts/b2093f89-9b28-4d97-a02c-a829315fd3e1
@@ -47,7 +46,7 @@ def retreive_token():
 # 9/5/22 #referenced this code to verify and decode #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
 def ver_and_decode_jwt(token):
   # set the well-known jwks.json url
-  well_known_url = urlopen(f'https://{domain}/well-known/jwks.json')
+  well_known_url = urlopen(f'https://{domain}/.well-known/jwks.json')
   # read the data from the well_known_url and change it to json
   well_known_data = json.loads(well_known_url.read())
   # retreive the unverfiied header using the token
@@ -55,7 +54,7 @@ def ver_and_decode_jwt(token):
   # init the rsa_key
   rsa_key = {}
   # run through all the keys in the data
-  for key in well_known_data:
+  for key in well_known_data['keys']:
     # if the 'kid' from one of the keys matches the 'kid from the unverified header, populate the rsa_key dictionary
     if key['kid'] == unver_header['kid']:
       rsa_key = {
@@ -68,10 +67,36 @@ def ver_and_decode_jwt(token):
   # if the rsa_key was populated try to decode and return the payload
   if rsa_key is not None:
     try:
-      payload = jwt.decode(token,rsa_key,['RSA256'],api,issuer=f'https://{domain}/')
+      payload = jwt.decode(token,rsa_key,algorithms=['RS256'],audience=api,issuer=f'https://{domain}/')
       return payload
     except:
       abort(401)
+
+# Build the require_authorization method
+# 9/5/22 #referenced this code to add in permissions #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0039/lessons/1e1c8e9d-61af-4a0a-b7d5-87e5becf9be7/concepts/b4d79d5c-3d79-43e6-93ca-0d750043a373
+def check_perms(permission,payload):
+  if permission not in payload['permissions']:
+    abort(403)
+  else:
+    return True
+
+# 9/5/22 #referenced this code to build this method #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
+def require_authorization(permission=''):
+  def require_authorization_decor(f):
+    @wraps(f)
+    def wrapper(*args,**kwargs):
+      # retreive the token
+      token = retreive_token()
+      try:
+        # get the payload using the ver_and_decode_jwt method and the token
+        payload = ver_and_decode_jwt(token)
+      except:
+        abort(401)
+       # make sure that the payload included the permission associated with a given endpoint 
+      check_perms(permission,payload) # 9/5/22 #referenced this code to add in permissions #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0039/lessons/1e1c8e9d-61af-4a0a-b7d5-87e5becf9be7/concepts/b4d79d5c-3d79-43e6-93ca-0d750043a373
+      return f(payload,*args,**kwargs)
+    return wrapper
+  return require_authorization_decor
     
 
 def create_app(test_config=None):
@@ -80,17 +105,14 @@ def create_app(test_config=None):
   CORS(app)
   setup_db(app,uri)
 
-  @app.route('/',methods=['GET','POST']) 
+  @app.route('/',methods=['GET']) 
   def test():
-    if methods == 'GET':
-      return 'Casting Agency'
-    else:
-      token = retreive_token()
-      return f'{token}'
+      return 'this is a test'
 
   # this endpoint gets all the movies form the data table
   @app.route('/movies',methods=['GET'])
-  def get_movies():
+  @require_authorization(permission='get:movies')
+  def get_movies(payload):
     # query all the movies from the table
     all_movies = Movies.query.all()
     # initialize a list to store the movies
