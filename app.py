@@ -81,7 +81,7 @@ def check_perms(permission,payload):
     return True
 
 # 9/5/22 #referenced this code to build this method #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
-def require_authorization(permission=''):
+def require_auth(permission=''):
   def require_authorization_decor(f):
     @wraps(f)
     def wrapper(*args,**kwargs):
@@ -111,7 +111,7 @@ def create_app(test_config=None):
 
   # this endpoint gets all the movies form the data table
   @app.route('/movies',methods=['GET'])
-  @require_authorization(permission='get:movies')
+  @require_auth(permission='get:movies')
   def get_movies(payload):
     # query all the movies from the table
     all_movies = Movies.query.all()
@@ -132,6 +132,7 @@ def create_app(test_config=None):
 
   # this endpoint retreives all the actors form the table
   @app.route('/actors',methods=['GET'])
+  @require_auth(permission='get:actors')
   def get_actors():
     # query all the actors from the table
     all_actors = Actors.query.all()
@@ -153,6 +154,7 @@ def create_app(test_config=None):
 
   # this endpoint deletes a movie from the table based in the <id> passed in the route handler
   @app.route('/movies/<id>',methods=['DELETE'])
+  @require_auth(permission='delete:movies')
   def delete_movie(id):
     # query the movie with the id from the route handler
     movie = Movies.query.get(id)
@@ -172,6 +174,7 @@ def create_app(test_config=None):
 
   # this endpoint deletes an actor from the table based on the <id> passed in teh route handler
   @app.route('/actors/<id>',methods=['DELETE'])
+  @require_auth(permission='delete:actors')
   def delete_actor(id):
     # query the actor with the id form the route handler
     actor = Actors.query.get(id)
@@ -191,6 +194,7 @@ def create_app(test_config=None):
 
   # this endpoint posts a new movie to the table based on the request made
   @app.route('/movies',methods=['POST'])
+  @require_auth(permission='post:movies')
   def add_movie():
     movie = request.get_json() #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
     if movie.get('title') is not None and movie.get('release_date') is not None: #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
@@ -209,6 +213,7 @@ def create_app(test_config=None):
   
   # this endpoint posts a new actor to the table based on teh request
   @app.route('/actors',methods=['POST'])
+  @require_auth(permission='post:actors')
   def add_actors():
     actor = request.get_json() #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
     if actor.get('name') is not None and actor.get('age') is not None and actor.get('gender') is not None: #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
@@ -229,6 +234,7 @@ def create_app(test_config=None):
   
   # this endpoint patches a new movie
   @app.route('/movies/<id>',methods=['PATCH'])
+  @require_auth(permission='patch:movies')
   def edit_movie(id):
     movie_request = request.get_json()
     movie = Movies.query.get(id)
@@ -254,6 +260,7 @@ def create_app(test_config=None):
 
   # this enpoint patches a new actor
   @app.route('/actors/<id>',methods=['PATCH'])
+  @require_auth(permission='patch:actors')
   def edit_actor(id):
     actor_request = request.get_json()
     actor = Actors.query.get(id)
