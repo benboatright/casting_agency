@@ -12,7 +12,7 @@ from models import setup_db,Actors,Movies
 from dotenv import load_dotenv
 load_dotenv('.env')
 
-# how to generate new tokens
+# how to generate new sign ins / tokens
 #https://dev-dy086z0n.us.auth0.com/authorize?audience=casting&response_type=token&client_id=z1jPPMPtpmyyDmrOFsNsRIH7rdHDdD9x&redirect_uri=http://localhost:8080/login-results
 
 user_name = os.getenv('user_name')
@@ -23,7 +23,7 @@ api = os.getenv('api')
 uri = f'postgresql://{user_name}@{database}' #8/29/22 #Referenced Amy's lesson on connecting to the database #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0046/lessons/b957ba99-1c62-471c-8482-c18ac3d7943b/concepts/b2093f89-9b28-4d97-a02c-a829315fd3e1
 
 # Authorization Methods
-# 9/5/22 #referenced this code to perform get token #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
+# 9/5/22 #referenced this code to build the retreive token function #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
 # this method retreives the bearer token from a request submitted
 def retreive_token():
   # retreive the Authorization
@@ -43,7 +43,7 @@ def retreive_token():
     return token
 
 # Verify and Decode the JWT
-# 9/5/22 #referenced this code to verify and decode #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
+# 9/5/22 #referenced this code to build the verify and decode function #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
 def ver_and_decode_jwt(token):
   # set the well-known jwks.json url
   well_known_url = urlopen(f'https://{domain}/.well-known/jwks.json')
@@ -73,14 +73,14 @@ def ver_and_decode_jwt(token):
       abort(401)
 
 # Build the require_authorization method
-# 9/5/22 #referenced this code to add in permissions #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0039/lessons/1e1c8e9d-61af-4a0a-b7d5-87e5becf9be7/concepts/b4d79d5c-3d79-43e6-93ca-0d750043a373
+# 9/5/22 #referenced this code to build the check permissions function #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0039/lessons/1e1c8e9d-61af-4a0a-b7d5-87e5becf9be7/concepts/b4d79d5c-3d79-43e6-93ca-0d750043a373
 def check_perms(permission,payload):
   if permission not in payload['permissions']:
     abort(403)
   else:
     return True
 
-# 9/5/22 #referenced this code to build this method #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
+# 9/5/22 #referenced this code to build the require auth method #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
 def require_auth(permission=''):
   def require_authorization_decor(f):
     @wraps(f)
