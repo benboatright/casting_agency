@@ -107,7 +107,7 @@ def create_app(test_config=None):
 
   @app.route('/',methods=['GET']) 
   def test():
-      return 'this is a test'
+      return 'Casting Agency API'
 
   # this endpoint gets all the movies form the data table
   @app.route('/movies',methods=['GET'])
@@ -115,20 +115,24 @@ def create_app(test_config=None):
   def get_movies(payload):
     # query all the movies from the table
     all_movies = Movies.query.all()
+    # check if any movies
+    if all_movies is None:
+      abort(404)
+    else:
     # initialize a list to store the movies
-    movies_list = []
-    # for each movie in the table, create a dictionary with success, id, title, and release date.
-    # then append each dictionary to the list 
-    for movie in all_movies:
-      movie_dict = {
-        'success': True,
-        'id': movie.id,
-        'title': movie.title,
-        'release_date': movie.release_date
-      }
-      movies_list.append(movie_dict)
-    # return the jsonifyied list
-    return jsonify(movies_list)
+      movies_list = []
+      # for each movie in the table, create a dictionary with success, id, title, and release date.
+      # then append each dictionary to the list 
+      for movie in all_movies:
+        movie_dict = {
+          'success': True,
+          'id': movie.id,
+          'title': movie.title,
+          'release_date': movie.release_date
+        }
+        movies_list.append(movie_dict)
+      # return the jsonifyied list
+      return jsonify(movies_list)
 
   # this endpoint retreives all the actors form the table
   @app.route('/actors',methods=['GET'])
@@ -136,21 +140,25 @@ def create_app(test_config=None):
   def get_actors():
     # query all the actors from the table
     all_actors = Actors.query.all()
-    # init a list to hold the actors 
-    actors_list = []
-    # for each actor in the table, fill out a dictionary with success, id, name, age, and gender.
-    # then append each of the dictionaries to the list
-    for actor in all_actors:
-      actor_dict = {
-        'success' : True,
-        'id' : actor.id,
-        'name': actor.name,
-        'age': actor.age,
-        'gender': actor.gender
-      }
-      actors_list.append(actor_dict)
-    # return the list
-    return jsonify(actors_list)
+    # check if any actors
+    if all_actors is None:
+      abort(404)
+    else:
+      # init a list to hold the actors 
+      actors_list = []
+      # for each actor in the table, fill out a dictionary with success, id, name, age, and gender.
+      # then append each of the dictionaries to the list
+      for actor in all_actors:
+        actor_dict = {
+          'success' : True,
+          'id' : actor.id,
+          'name': actor.name,
+          'age': actor.age,
+          'gender': actor.gender
+        }
+        actors_list.append(actor_dict)
+      # return the list
+      return jsonify(actors_list)
 
   # this endpoint deletes a movie from the table based in the <id> passed in the route handler
   @app.route('/movies/<id>',methods=['DELETE'])
@@ -167,10 +175,7 @@ def create_app(test_config=None):
       })
     # else, return the fail dictionary
     else:
-      return jsonify({
-        'success': False,
-        'id':'The id provided is not in the table'
-      })
+      abort(404)
 
   # this endpoint deletes an actor from the table based on the <id> passed in teh route handler
   @app.route('/actors/<id>',methods=['DELETE'])
@@ -187,10 +192,7 @@ def create_app(test_config=None):
       })
     # else, return the fail dictionary
     else:
-      return jsonify({
-        'success': False,
-        'id': 'The id provided is not in the table'
-      })
+      abort(404)
 
   # this endpoint posts a new movie to the table based on the request made
   @app.route('/movies',methods=['POST'])
@@ -207,9 +209,7 @@ def create_app(test_config=None):
         'release_date':movie.get('release_date') #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
       })
     else:
-      return jsonify({
-        'success':False,
-      })
+      abort(400)
   
   # this endpoint posts a new actor to the table based on teh request
   @app.route('/actors',methods=['POST'])
@@ -228,9 +228,7 @@ def create_app(test_config=None):
         'gender':actor.get('gender') #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
       })
     else:
-        return jsonify({
-          'success':False
-        })
+        abort(400)
   
   # this endpoint patches a new movie
   @app.route('/movies/<id>',methods=['PATCH'])
@@ -253,10 +251,7 @@ def create_app(test_config=None):
         'id':id
       })
     else:
-      return jsonify({
-        'success': False,
-        'id':id
-      })
+      abort(404)
 
   # this enpoint patches a new actor
   @app.route('/actors/<id>',methods=['PATCH'])
@@ -282,10 +277,43 @@ def create_app(test_config=None):
         'id':id
       })
     else:
-      return jsonify({
-        'success':False,
-        'id':id
-      })
+      abort(404)
+
+  #ERROR HANDLERS
+  #9/10/22 # used the linked video to build all these handlers #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/8755536a-7966-476b-81ac-063db44c85d4
+  @app.errorhandler
+  def resource_not_found():
+    return jsonify({
+      'success':False,
+      'error code': 404,
+      'error message': 'The resource you requested was not found.'
+    }), 404
+
+  @app.errorhandler
+  def forbidden_request():
+    return jsonify ({
+      'success':False,
+      'error code': 403,
+      'error message': 'You do not have permission to access the resource you requested.'
+    }), 403
+
+  @app.errorhandler
+  def unauthorized_request():
+    return jsonify ({
+      'success':False,
+      'error code':401,
+      'error message': 'You must be authenticated to access this resource.'
+    }), 401
+
+  @app.errorhandler
+  def bad_request():
+    return jsonify ({
+      'success':False,
+      'error code': 400,
+      'error message': 'Syntax of the request was not understood.'
+    })
+
+  
 
   return app
 
