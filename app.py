@@ -1,6 +1,5 @@
 import json
 import os
-from platform import release
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -102,8 +101,8 @@ def require_auth(permission=''):
 def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
-  CORS(app)
   setup_db(app,uri)
+  CORS(app)
 
   @app.route('/',methods=['GET']) 
   def test():
@@ -116,7 +115,7 @@ def create_app(test_config=None):
     # query all the movies from the table
     all_movies = Movies.query.all()
     # check if any movies
-    if all_movies is None:
+    if len(all_movies) == 0:
       abort(404)
     else:
     # initialize a list to store the movies
@@ -141,7 +140,7 @@ def create_app(test_config=None):
     # query all the actors from the table
     all_actors = Actors.query.all()
     # check if any actors
-    if all_actors is None:
+    if len(all_actors) == 0:
       abort(404)
     else:
       # init a list to hold the actors 
