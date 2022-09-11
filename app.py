@@ -105,8 +105,12 @@ def create_app(test_config=None):
   setup_db(app,uri)
   CORS(app)
 
-  @app.route('/initaliaze',methods=['GET']) 
-  def test():
+  @app.route('/')
+  def homepage():
+    return 'Casting Agency API.'
+
+  @app.route('/initialize',methods=['GET']) 
+  def initialize_tables():
     all_actors = Actors.query.all()
     tom_check = 0
     jennifer_check = 0
@@ -125,12 +129,12 @@ def create_app(test_config=None):
     all_movies = Movies.query.all()
     top_gun_check = 0
     for movie in all_movies:
-      if movie.name == 'Top Gun: Maverick':
+      if movie.title == 'Top Gun: Maverick':
         top_gun_check += 1
     if top_gun_check == 0:
       new_movie = Movies(title='Top Gun: Maverick',release_date='2022-05-27')
       new_movie.insert()
-    return 'Casting Agency API'
+    return 'The "actors" table and the "movies" table has been initialized'
 
   # this endpoint gets all the movies form the data table
   @app.route('/movies',methods=['GET'])
