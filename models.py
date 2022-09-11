@@ -7,9 +7,11 @@ from dotenv import load_dotenv
 import os
 load_dotenv('.env')
 
-database = os.getenv('datbase')
-user_name = os.getenv('user_name')
-uri = f'postgresql://{user_name}@{database}' #8/29/22 #Referenced Amy's lesson on connecting to the database #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0046/lessons/b957ba99-1c62-471c-8482-c18ac3d7943b/concepts/b2093f89-9b28-4d97-a02c-a829315fd3e1
+#database = os.getenv('datbase')
+#user_name = os.getenv('user_name')
+database_url = os.environ['DATABASE_URL']
+
+uri = f'{database_url}' #8/29/22 #Referenced Amy's lesson on connecting to the database #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0046/lessons/b957ba99-1c62-471c-8482-c18ac3d7943b/concepts/b2093f89-9b28-4d97-a02c-a829315fd3e1
 
 db = SQLAlchemy()
 

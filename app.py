@@ -14,12 +14,13 @@ load_dotenv('.env')
 # how to generate new sign ins / tokens
 #https://dev-dy086z0n.us.auth0.com/authorize?audience=casting&response_type=token&client_id=z1jPPMPtpmyyDmrOFsNsRIH7rdHDdD9x&redirect_uri=http://localhost:8080/login-results
 
-user_name = os.getenv('user_name')
-database = os.getenv('database')
-domain = os.getenv('auth_domain')
-api = os.getenv('api')
+#user_name = os.getenv('user_name')
+database_url = os.environ['DATABASE_URL']#os.getenv('database')
+domain = os.environ['Domain']#os.getenv('auth_domain')
+api = os.environ['API']#os.getenv('api')
 
-uri = f'postgresql://{user_name}@{database}' #8/29/22 #Referenced Amy's lesson on connecting to the database #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0046/lessons/b957ba99-1c62-471c-8482-c18ac3d7943b/concepts/b2093f89-9b28-4d97-a02c-a829315fd3e1
+#uri = f'postgresql://{user_name}@{database}' #8/29/22 #Referenced Amy's lesson on connecting to the database #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0046/lessons/b957ba99-1c62-471c-8482-c18ac3d7943b/concepts/b2093f89-9b28-4d97-a02c-a829315fd3e1
+uri = f'{database_url}' #8/29/22 #Referenced Amy's lesson on connecting to the database #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0046/lessons/b957ba99-1c62-471c-8482-c18ac3d7943b/concepts/b2093f89-9b28-4d97-a02c-a829315fd3e1
 
 # Authorization Methods
 # 9/5/22 #referenced this code to build the retreive token function #https://github.com/udacity/cd0039-Identity-and-Access-Management/blob/master/lesson-2-Identity-and-Authentication/BasicFlaskAuth/app.py
