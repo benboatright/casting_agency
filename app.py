@@ -16,7 +16,7 @@ load_dotenv('.env')
 
 #user_name = os.getenv('user_name')
 database_url = os.environ['DATABASE_URL']#os.getenv('database')
-domain = os.environ['Domain']#os.getenv('auth_domain')
+domain = os.environ['DOMAIN']#os.getenv('auth_domain')
 api = os.environ['API']#os.getenv('api')
 
 #uri = f'postgresql://{user_name}@{database}' #8/29/22 #Referenced Amy's lesson on connecting to the database #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0046/lessons/b957ba99-1c62-471c-8482-c18ac3d7943b/concepts/b2093f89-9b28-4d97-a02c-a829315fd3e1
