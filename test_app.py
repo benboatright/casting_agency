@@ -16,11 +16,13 @@ load_dotenv('.env')
 test_url = os.getenv('test_url')
 
 #9/10/22 # learned how to use bearer tokens in unittest by referrencing the code linked #https://knowledge.udacity.com/questions/316795
-# use the Executive Producer Role to perform testing
-exec_prod_token ='eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InZnR3RoZnp0ZnVfa05yUmpQQzVIciJ9.eyJpc3MiOiJodHRwczovL2Rldi1keTA4Nnowbi51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjMxNjUyN2ZiZGVhODBmYzY1ZWIxYTM3IiwiYXVkIjoiY2FzdGluZyIsImlhdCI6MTY2MjgzMjMxNywiZXhwIjoxNjYyOTE4NzE3LCJhenAiOiJ6MWpQUE1QdHBteXlEbXJPRnNOc1JJSDdyZEhEZEQ5eCIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmFjdG9ycyIsImRlbGV0ZTptb3ZpZXMiLCJnZXQ6YWN0b3JzIiwiZ2V0Om1vdmllcyIsInBhdGNoOmFjdG9ycyIsInBhdGNoOm1vdmllcyIsInBvc3Q6YWN0b3JzIiwicG9zdDptb3ZpZXMiXX0.RyyYhStinEjaUHTVNQNPJu6R-LydGgKcAjYRjQbhO0HTyh4f60O3PqDFvNWTsDk7672t30O53l3vnrozwEdWt6Zs0yYrrDpPLoGcQ0g5MchL05eJp-y636UqBNTQzsc7wAVn_G-kEmTFdDPc2cGg4pqpoO1ezrEEZxWyGWgz2nFQOtmNXCDXidoSjyZheVN6l0EBnWPE6ib9DWxndoUA7jLzxk1A2ChDO21AcD4xQ7KDGToTg1DJxFSXoDAxCcJJP96KF7JdJgbMB_j2jw7Hx5qQr03giu0nGs2zYXA_TyPvu5Gxb_lxUhCWOTDmpxJ4zeIcdDzP1HpwFbmUTH5_Uw'
-exec_producer_auth = {
-    'Authorization': f'Bearer {exec_prod_token}'
-}
+exec_producer_token ='eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InZnR3RoZnp0ZnVfa05yUmpQQzVIciJ9.eyJpc3MiOiJodHRwczovL2Rldi1keTA4Nnowbi51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjMxNjUyN2ZiZGVhODBmYzY1ZWIxYTM3IiwiYXVkIjoiY2FzdGluZyIsImlhdCI6MTY2MjgzMjMxNywiZXhwIjoxNjYyOTE4NzE3LCJhenAiOiJ6MWpQUE1QdHBteXlEbXJPRnNOc1JJSDdyZEhEZEQ5eCIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmFjdG9ycyIsImRlbGV0ZTptb3ZpZXMiLCJnZXQ6YWN0b3JzIiwiZ2V0Om1vdmllcyIsInBhdGNoOmFjdG9ycyIsInBhdGNoOm1vdmllcyIsInBvc3Q6YWN0b3JzIiwicG9zdDptb3ZpZXMiXX0.RyyYhStinEjaUHTVNQNPJu6R-LydGgKcAjYRjQbhO0HTyh4f60O3PqDFvNWTsDk7672t30O53l3vnrozwEdWt6Zs0yYrrDpPLoGcQ0g5MchL05eJp-y636UqBNTQzsc7wAVn_G-kEmTFdDPc2cGg4pqpoO1ezrEEZxWyGWgz2nFQOtmNXCDXidoSjyZheVN6l0EBnWPE6ib9DWxndoUA7jLzxk1A2ChDO21AcD4xQ7KDGToTg1DJxFSXoDAxCcJJP96KF7JdJgbMB_j2jw7Hx5qQr03giu0nGs2zYXA_TyPvu5Gxb_lxUhCWOTDmpxJ4zeIcdDzP1HpwFbmUTH5_Uw'
+cast_director_token = ''
+cast_assistant_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InZnR3RoZnp0ZnVfa05yUmpQQzVIciJ9.eyJpc3MiOiJodHRwczovL2Rldi1keTA4Nnowbi51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjMxNjUyMGU3MmE0NWM1MDc4MTY4MTZmIiwiYXVkIjoiY2FzdGluZyIsImlhdCI6MTY2MjkxMjc0OCwiZXhwIjoxNjYyOTk5MTQ4LCJhenAiOiJ6MWpQUE1QdHBteXlEbXJPRnNOc1JJSDdyZEhEZEQ5eCIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZ2V0OmFjdG9ycyIsImdldDptb3ZpZXMiXX0.S-jsouC1UKfN67kIJbSOtNsq1wX9IaRz724v9dIKFquyE-RcXDq5QR6KaYAvz-cam37rPYVSbrO4D1GRmdWeXQ2RqrLkgTxfzRv6YnBbkXCAlEFk2jpqiePbbRPyYwiMb344evcaWdBqihtnvXA6qK6nsoDec53AtFYWrNP5Z9YgUh-o2KcI1-A3x3xAAgRMhB7e-ZfBLOvhQgG8V1IBOLVBAZJdfjb3ULrBkkFMUBq299XXVbqXDt_g2Pu_yWKaykapg6BkQmflx3QILrjyXykJREu1llGAfrCQsCsp92f-S4uobVMzZ2G8UQXeEwVbumOwwCo1zLg9Qpc-Sz4TKw'
+
+exec_producer_auth = {'Authorization': f'Bearer {exec_producer_token}'}
+cast_director_auth = {'Authorization': f'Bearer {cast_director_token}'}
+cast_assistant_auth = {'Authorization': f'Bearer {cast_assistant_token}'}
 
 class CastingAgencyTest(unittest.TestCase):
     def setUp(self):
@@ -270,7 +272,7 @@ class CastingAgencyTest(unittest.TestCase):
         actress = Actors.query.all()
         actress_id = actress[0].id
         # make the id wrong, causing a 404 error
-        wrong_id = actress_id + 1
+        wrong_id = actress_id + 100
         # attempt the delete
         res = self.client().delete(f'/actors/{wrong_id}',headers=exec_producer_auth)
         # test the failure
@@ -298,6 +300,37 @@ class CastingAgencyTest(unittest.TestCase):
         delete_actors = Actors.query.all()
         for actor in delete_actors:
             actor.delete()
+
+    # Casting Assistant Success
+    def test_casting_assistant_success_get(self):
+        # add an actor for the casting assistant to view
+        new_actor = Actors(name='Tom Cruise',age=60,gender='Male')
+        new_actor.insert()
+        # attempt the get request
+        res = self.client().get('/actors',headers=cast_assistant_auth)
+        self.assertEqual(res.status_code,200)
+
+    # Casting Assistant Failure
+    def test_casting_assistant_error_post(self):
+        # try to post the new actor below, but this should fail based on RBAC
+        new_actor = {
+            'name':'Tom Cruise',
+            'age':60,
+            'gender':'Male'
+        }
+        res = self.client().post('/actors',headers=cast_assistant_auth)
+        # test that this should fail
+        self.assertEqual(res.status_code,403)
+        # delete the actor
+        delete_actors = Actors.query.all()
+        for actor in delete_actors:
+            actor.delete()
+
+    # Casting Director Success
+    # Casting Director Failure
+
+    # Executive Producer Success 1
+    # Executive Producer Success 2
 
 if __name__ == "__main__":
     unittest.main()
