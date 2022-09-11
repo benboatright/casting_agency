@@ -105,7 +105,7 @@ def create_app(test_config=None):
   setup_db(app,uri)
   CORS(app)
 
-  @app.route('/')
+  @app.route('/',methods=['GET'])
   def homepage():
     return 'Casting Agency API.'
 
