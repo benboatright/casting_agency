@@ -4,6 +4,8 @@ from email import header
 import os
 import unittest
 import json
+
+from requests import delete
 from app import create_app
 from models import setup_db, Actors, Movies
 from flask_sqlalchemy import SQLAlchemy
@@ -224,7 +226,40 @@ class CastingAgencyTest(unittest.TestCase):
             actor.delete()
 
     # failed delete:movies
+    def test_delete_movies_error(self):
+        # create a movie to delete
+        new_movie = Movies(title='Top Gun: Maverick',release_date='2022-05-27')
+        new_movie.insert()
+        # get the wrong id for delete to fail 404
+        movies = Movies.query.all()
+        movie_id = movies[0].id
+        wrong_id = movie_id + 1
+        # attempt the delete request
+        res = self.client().delete(f'/movies/{wrong_id}',headers=exec_producer_auth)
+        self.assertEqual(res.status_code,404)
+        # delete movies for other test to work
+        delete_movies = Movies.query.all()
+        for movie in delete_movies:
+            movie.delete()
+
     # success delete:movies
+    def test_delete_movies_success(self):
+        # create a move to delete
+        new_movie = Movies(title='Top Gun: Maverick',release_date='2022-05-27')
+        new_movie.insert()
+        # get the right id for delete success
+        movies = Movies.query.all()
+        movie_id = movies[0].id
+        # attempt the delete request
+        res = self.client().delete(f'/movies/{movie_id}',headers=exec_producer_auth)
+        data = json.loads(res.data)
+        # test that the delete was successful
+        self.assertEqual(res.status_code,200)
+        self.assertEqual(int(data['id']),movie_id)
+        # delete the movie
+        delete_movies = Movies.query.all()
+        for movie in delete_movies:
+            movie.delete()
 
     # failed delete:actors
     # success delete:actors

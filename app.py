@@ -170,7 +170,7 @@ def create_app(test_config=None):
       movie.delete()
       return jsonify({
         'success': True,
-        'id_deleted':id
+        'id':id
       })
     # else, return the fail dictionary
     else:
