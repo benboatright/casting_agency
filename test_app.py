@@ -1,4 +1,5 @@
 #9/10/22 #used this lesson to build this script #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/fd1af4a3-5a8e-4d43-87cf-2467d773c1b8/concepts/092609e2-d972-4102-95c7-e78ba950bc2a
+from email import header
 import os
 import unittest
 import json
@@ -101,8 +102,35 @@ class CastingAgencyTest(unittest.TestCase):
             movie.delete()
 
     # failed post:actors
-    # success post:actors
+    def test_post_actors_error(self):
+        # create an actor for testing
+        new_actor = {
+            'full_name':'Tom Cruise',
+            'age':60,
+            'gender':'Male'
+        }
+        # attempt to access endpoint
+        res = self.client().post('/actors',headers=exec_producer_auth,json=new_actor)
+        # the response should be 400 because full_name is not the column name
+        self.assertEqual(res.status_code,400)
 
+    # success post:actors
+    def test_post_actors_success(self):
+        new_actor = {
+            'name':'Tom Cruise',
+            'age':60,
+            'gender':'Male'
+        }
+        res = self.client().post('/actors',headers=exec_producer_auth,json=new_actor)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code,200)
+        self.assertEqual(data['name'],'Tom Cruise')
+
+        delete_actors = Actors.query.all()
+        for actor in delete_actors:
+            actor.delete()
+            
     # failed patch:movies
     # success patch:movies
 
