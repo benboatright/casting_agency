@@ -136,7 +136,7 @@ def create_app(test_config=None):
   # this endpoint retreives all the actors form the table
   @app.route('/actors',methods=['GET'])
   @require_auth(permission='get:actors')
-  def get_actors():
+  def get_actors(payload):
     # query all the actors from the table
     all_actors = Actors.query.all()
     # check if any actors
@@ -162,7 +162,7 @@ def create_app(test_config=None):
   # this endpoint deletes a movie from the table based in the <id> passed in the route handler
   @app.route('/movies/<id>',methods=['DELETE'])
   @require_auth(permission='delete:movies')
-  def delete_movie(id):
+  def delete_movie(payload,id):
     # query the movie with the id from the route handler
     movie = Movies.query.get(id)
     # if the movie id is in the table, delete it and return the success dictionary
@@ -179,7 +179,7 @@ def create_app(test_config=None):
   # this endpoint deletes an actor from the table based on the <id> passed in teh route handler
   @app.route('/actors/<id>',methods=['DELETE'])
   @require_auth(permission='delete:actors')
-  def delete_actor(id):
+  def delete_actor(payload,id):
     # query the actor with the id form the route handler
     actor = Actors.query.get(id)
     # if the actor is in the tbale, delete it and return the success
@@ -196,7 +196,7 @@ def create_app(test_config=None):
   # this endpoint posts a new movie to the table based on the request made
   @app.route('/movies',methods=['POST'])
   @require_auth(permission='post:movies')
-  def add_movie():
+  def add_movie(payload):
     movie = request.get_json() #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
     if movie.get('title') is not None and movie.get('release_date') is not None: #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
       new_movie = Movies(title=movie.get('title'),
@@ -213,7 +213,7 @@ def create_app(test_config=None):
   # this endpoint posts a new actor to the table based on teh request
   @app.route('/actors',methods=['POST'])
   @require_auth(permission='post:actors')
-  def add_actors():
+  def add_actors(payload):
     actor = request.get_json() #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
     if actor.get('name') is not None and actor.get('age') is not None and actor.get('gender') is not None: #8/31/22 #Referenced Caryn's code to remember how to get the request #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/4cecb5bf-6b5c-4c5c-8428-51c49374bab0
       new_actor = Actors(name=actor.get('name'),
@@ -232,7 +232,7 @@ def create_app(test_config=None):
   # this endpoint patches a new movie
   @app.route('/movies/<id>',methods=['PATCH'])
   @require_auth(permission='patch:movies')
-  def edit_movie(id):
+  def edit_movie(payload,id):
     movie_request = request.get_json()
     movie = Movies.query.get(id)
 
@@ -255,7 +255,7 @@ def create_app(test_config=None):
   # this enpoint patches a new actor
   @app.route('/actors/<id>',methods=['PATCH'])
   @require_auth(permission='patch:actors')
-  def edit_actor(id):
+  def edit_actor(payload,id):
     actor_request = request.get_json()
     actor = Actors.query.get(id)
 

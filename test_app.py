@@ -49,8 +49,21 @@ class CastingAgencyTest(unittest.TestCase):
             movie.delete()
     
     # failed get:actors
+    def test_actors_error(self):
+        res = self.client().get('/actors',headers=exec_producer_auth)
+        self.assertEqual(res.status_code,404)
+
     # success get:actors
-    
+    def test_actors_succes(self):
+        # add an actor for testing the get endpoint
+        new_actor = Actors(name='Tom Cruise', age=60, gender='Male')
+        new_actor.insert()
+        # access the endpoint
+        res = self.client().get('/actors',headers=exec_producer_auth)
+        data = json.loads(res.data)
+        # run the test
+        self.assertEqual(res.status_code,200)
+        self.assertEqual(data[0]['name'],'Tom Cruise')
     # failed post:movies
     # success post:movies
 
