@@ -107,7 +107,30 @@ def create_app(test_config=None):
 
   @app.route('/',methods=['GET']) 
   def test():
-      return 'Casting Agency API'
+    all_actors = Actors.query.all()
+    tom_check = 0
+    jennifer_check = 0
+    for actor in all_actors:
+      if actor.name == 'Tom Cruise':
+        tom_check += 1
+      if actor.name == 'Jennifer Connelly':
+        jennifer_check += 1
+    if tom_check == 0:
+      new_actor = Actors(name='Tom Cruise',age=60,gender='Male')
+      new_actor.insert()
+    if jennifer_check == 0:
+      new_actress = Actors(name='Jennifer Connelly',age=51,gender='Female')
+      new_actress.insert()
+    
+    all_movies = Movies.query.all()
+    top_gun_check = 0
+    for movie in all_movies:
+      if movie.name == 'Top Gun: Maverick':
+        top_gun_check += 1
+    if top_gun_check == 0:
+      new_movie = Movies(title='Top Gun: Maverick',release_date='2022-05-27')
+      new_movie.insert()
+    return 'Casting Agency API'
 
   # this endpoint gets all the movies form the data table
   @app.route('/movies',methods=['GET'])
