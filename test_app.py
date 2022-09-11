@@ -14,7 +14,6 @@ test_url = os.getenv('test_url')
 #using bearer tokens in unintest #https://knowledge.udacity.com/questions/316795
 # use the Executive Producer Role to perform testing
 exec_prod_token ='eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InZnR3RoZnp0ZnVfa05yUmpQQzVIciJ9.eyJpc3MiOiJodHRwczovL2Rldi1keTA4Nnowbi51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjMxNjUyN2ZiZGVhODBmYzY1ZWIxYTM3IiwiYXVkIjoiY2FzdGluZyIsImlhdCI6MTY2MjgzMjMxNywiZXhwIjoxNjYyOTE4NzE3LCJhenAiOiJ6MWpQUE1QdHBteXlEbXJPRnNOc1JJSDdyZEhEZEQ5eCIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmFjdG9ycyIsImRlbGV0ZTptb3ZpZXMiLCJnZXQ6YWN0b3JzIiwiZ2V0Om1vdmllcyIsInBhdGNoOmFjdG9ycyIsInBhdGNoOm1vdmllcyIsInBvc3Q6YWN0b3JzIiwicG9zdDptb3ZpZXMiXX0.RyyYhStinEjaUHTVNQNPJu6R-LydGgKcAjYRjQbhO0HTyh4f60O3PqDFvNWTsDk7672t30O53l3vnrozwEdWt6Zs0yYrrDpPLoGcQ0g5MchL05eJp-y636UqBNTQzsc7wAVn_G-kEmTFdDPc2cGg4pqpoO1ezrEEZxWyGWgz2nFQOtmNXCDXidoSjyZheVN6l0EBnWPE6ib9DWxndoUA7jLzxk1A2ChDO21AcD4xQ7KDGToTg1DJxFSXoDAxCcJJP96KF7JdJgbMB_j2jw7Hx5qQr03giu0nGs2zYXA_TyPvu5Gxb_lxUhCWOTDmpxJ4zeIcdDzP1HpwFbmUTH5_Uw'
-
 exec_producer_auth = {
     'Authorization': f'Bearer {exec_prod_token}'
 }
@@ -29,15 +28,25 @@ class CastingAgencyTest(unittest.TestCase):
 
     # failed get:movies
     def test_movie_error(self):
+        # since the table is empty, test that it returns 404
         res = self.client().get('/movies',headers=exec_producer_auth)
         self.assertEqual(res.status_code,404)
+
     # success get:movies
     def test_movie_success(self):
+        # add movies for testing
         new_movie = Movies(title='Top Gun 2',release_date='2022-05-27')
         new_movie.insert()
+        # access endpoint
         res = self.client().get('/movies',headers=exec_producer_auth)
+        data = json.loads(res.data)
+        # run tests 
         self.assertEqual(res.status_code,200)
-        
+        self.assertEqual(data[0]['title'],'Top Gun 2')
+        # clear out the added data
+        delete_movie = Movies.query.all()
+        for movie in delete_movie:
+            movie.delete()
     
     # failed get:actors
     # success get:actors
