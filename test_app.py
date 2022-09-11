@@ -27,34 +27,34 @@ class CastingAgencyTest(unittest.TestCase):
         setup_db(self.app,self.database_path)
 
     # failed get:movies
-    def test_movie_error(self):
+    def test_get_movie_error(self):
         # since the table is empty, test that it returns 404
         res = self.client().get('/movies',headers=exec_producer_auth)
         self.assertEqual(res.status_code,404)
 
     # success get:movies
-    def test_movie_success(self):
+    def test_get_movie_success(self):
         # add movies for testing
-        new_movie = Movies(title='Top Gun 2',release_date='2022-05-27')
+        new_movie = Movies(title='Top Gun: Maverick',release_date='2022-05-27')
         new_movie.insert()
         # access endpoint
         res = self.client().get('/movies',headers=exec_producer_auth)
         data = json.loads(res.data)
         # run tests 
         self.assertEqual(res.status_code,200)
-        self.assertEqual(data[0]['title'],'Top Gun 2')
+        self.assertEqual(data[0]['title'],'Top Gun: Maverick')
         # clear out the added data
         delete_movie = Movies.query.all()
         for movie in delete_movie:
             movie.delete()
     
     # failed get:actors
-    def test_actors_error(self):
+    def test_get_actors_error(self):
         res = self.client().get('/actors',headers=exec_producer_auth)
         self.assertEqual(res.status_code,404)
 
     # success get:actors
-    def test_actors_succes(self):
+    def test_get_actors_succes(self):
         # add an actor for testing the get endpoint
         new_actor = Actors(name='Tom Cruise', age=60, gender='Male')
         new_actor.insert()
@@ -64,8 +64,41 @@ class CastingAgencyTest(unittest.TestCase):
         # run the test
         self.assertEqual(res.status_code,200)
         self.assertEqual(data[0]['name'],'Tom Cruise')
+        # delete the added data
+        delete_actor = Actors.query.all()
+        for actor in delete_actor:
+            actor.delete()
+
     # failed post:movies
+    def test_post_movies_error(self):
+        # create json data for the post
+        new_movie = {
+            'screen_name':'Top Gun: Maverick',
+            'release': '2022-05-27'
+        }
+        # access the endpoint and attempt post request
+        res = self.client().post('/movies',headers=exec_producer_auth,json=new_movie)
+        # the column names are incorrect, so this returns 400 error
+        self.assertEqual(res.status_code,400)
+
     # success post:movies
+    def test_post_movies_success(self):
+        # create json data for the post
+        new_movie = {
+            'title':'Top Gun: Maverick',
+            'release_date':'2022-05-27'
+        }
+        # attempt post request
+        res = self.client().post('/movies',headers=exec_producer_auth,json=new_movie)
+        # get the data from the response
+        data = json.loads(res.data)
+        # check that it worked
+        self.assertEqual(res.status_code,200)
+        self.assertEqual(data['title'],'Top Gun: Maverick')
+        # delete the data
+        delete_movies = Movies.query.all()
+        for movie in delete_movies:
+            movie.delete()
 
     # failed post:actors
     # success post:actors
