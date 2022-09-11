@@ -235,6 +235,8 @@ def create_app(test_config=None):
   def edit_movie(payload,id):
     movie_request = request.get_json()
     movie = Movies.query.get(id)
+    if movie is None:
+      abort(404)
 
     if movie_request.get('title') is not None or movie_request.get('release_date') is not None:
       # determine the title to update
@@ -250,7 +252,7 @@ def create_app(test_config=None):
         'id':id
       })
     else:
-      abort(404)
+      abort(400)
 
   # this enpoint patches a new actor
   @app.route('/actors/<id>',methods=['PATCH'])
@@ -261,7 +263,7 @@ def create_app(test_config=None):
     if actor is None:
       abort(404)
 
-    if actor_request.get('name') is not None and actor_request.get('age') is not None and actor_request.get('gender') is not None:
+    if actor_request.get('name') is not None or actor_request.get('age') is not None or actor_request.get('gender') is not None:
       # determine the name
       if actor_request.get('name') is not None:
         actor.name = actor_request.get('name')

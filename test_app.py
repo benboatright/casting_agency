@@ -1,4 +1,5 @@
 #9/10/22 #used this lesson to build this script #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/fd1af4a3-5a8e-4d43-87cf-2467d773c1b8/concepts/092609e2-d972-4102-95c7-e78ba950bc2a
+#9/10/22 #used the review code associated with this lesson to build this script as well #https://github.com/udacity/cd0037-API-Development-and-Documentation-exercises/blob/master/3_Testing_Review/backend/test_flaskr.py
 from email import header
 import os
 import unittest
@@ -12,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv('.env')
 test_url = os.getenv('test_url')
 
-#using bearer tokens in unintest #https://knowledge.udacity.com/questions/316795
+#9/10/22 # learned how to use bearer tokens in unittest by referrencing the code linked #https://knowledge.udacity.com/questions/316795
 # use the Executive Producer Role to perform testing
 exec_prod_token ='eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InZnR3RoZnp0ZnVfa05yUmpQQzVIciJ9.eyJpc3MiOiJodHRwczovL2Rldi1keTA4Nnowbi51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjMxNjUyN2ZiZGVhODBmYzY1ZWIxYTM3IiwiYXVkIjoiY2FzdGluZyIsImlhdCI6MTY2MjgzMjMxNywiZXhwIjoxNjYyOTE4NzE3LCJhenAiOiJ6MWpQUE1QdHBteXlEbXJPRnNOc1JJSDdyZEhEZEQ5eCIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmFjdG9ycyIsImRlbGV0ZTptb3ZpZXMiLCJnZXQ6YWN0b3JzIiwiZ2V0Om1vdmllcyIsInBhdGNoOmFjdG9ycyIsInBhdGNoOm1vdmllcyIsInBvc3Q6YWN0b3JzIiwicG9zdDptb3ZpZXMiXX0.RyyYhStinEjaUHTVNQNPJu6R-LydGgKcAjYRjQbhO0HTyh4f60O3PqDFvNWTsDk7672t30O53l3vnrozwEdWt6Zs0yYrrDpPLoGcQ0g5MchL05eJp-y636UqBNTQzsc7wAVn_G-kEmTFdDPc2cGg4pqpoO1ezrEEZxWyGWgz2nFQOtmNXCDXidoSjyZheVN6l0EBnWPE6ib9DWxndoUA7jLzxk1A2ChDO21AcD4xQ7KDGToTg1DJxFSXoDAxCcJJP96KF7JdJgbMB_j2jw7Hx5qQr03giu0nGs2zYXA_TyPvu5Gxb_lxUhCWOTDmpxJ4zeIcdDzP1HpwFbmUTH5_Uw'
 exec_producer_auth = {
@@ -20,7 +21,6 @@ exec_producer_auth = {
 }
 
 class CastingAgencyTest(unittest.TestCase):
-
     def setUp(self):
         self.app = create_app()
         self.client = self.app.test_client
@@ -116,23 +116,64 @@ class CastingAgencyTest(unittest.TestCase):
 
     # success post:actors
     def test_post_actors_success(self):
+        # create new actor
         new_actor = {
             'name':'Tom Cruise',
             'age':60,
             'gender':'Male'
         }
+        # attepmt the post request
         res = self.client().post('/actors',headers=exec_producer_auth,json=new_actor)
+        # retreive the data
         data = json.loads(res.data)
-
+        # the post request should be succesfull and add the actor
         self.assertEqual(res.status_code,200)
         self.assertEqual(data['name'],'Tom Cruise')
-
+        # delete the actor from the database
         delete_actors = Actors.query.all()
         for actor in delete_actors:
             actor.delete()
 
     # failed patch:movies
+    def test_patch_movies_error(self):
+        # add new movie
+        new_movie = Movies(title='Top Gun: Maverick',release_date='1986-05-16')
+        new_movie.insert()
+        # try to update this movie's release date
+        update_movie = {
+            'release_date':'2020-05-27'
+        }
+        patched_movie = Movies.query.all()
+        movie_id = patched_movie[0].id
+        # change the id to create the 404 error since the id does not exist
+        wrong_movie_id = movie_id + 1
+        # attempt the patch request
+        res = self.client().patch(f'/movies/{wrong_movie_id}',headers=exec_producer_auth,json=update_movie)
+        self.assertEqual(res.status_code,404)
+        # delete the movie
+        delete_movies = Movies.query.all()
+        for movie in delete_movies:
+            movie.delete()
+
     # success patch:movies
+    def test_patch_movies_success(self):
+        new_movie = Movies(title='Top Gun: Maverick',release_date='1986-05-16')
+        new_movie.insert()
+        update_movie = {
+            'release_date':'2020-05-27'
+        }
+        patched_movie = Movies.query.all()
+        movie_id = patched_movie[0].id
+        # attempt the patch request with the correct
+        res = self.client().patch(f'/movies/{movie_id}',headers=exec_producer_auth,json=update_movie)
+        data = json.loads(res.data)
+        # perform the test to make sure the patch was successful
+        self.assertEqual(res.status_code,200)
+        self.assertEqual(int(data['id']),movie_id)
+        # delete the movie from the table
+        delete_movies = Movies.query.all()
+        for movie in delete_movies:
+            movie.delete()
 
     # failed patch:actors
     def test_patch_actors_error(self):
@@ -141,14 +182,13 @@ class CastingAgencyTest(unittest.TestCase):
         new_actress.insert()
         # attempt to update the age with new json
         update_actress = {
-            'full_name':'Jennifer Connelly',
-            'age':51,
-            'gender':'Female'
+            'age':51
         }
         # get the id for the patch request
         patched_actress = Actors.query.all()
         actress = patched_actress[0]
         actress_id = actress.id
+        # change the id so that it does not exist. This will cause 404 error
         wrong_actress_id = actress_id + 1
         # attempt to make the patch request
         res = self.client().patch(f'/actors/{wrong_actress_id}',headers=exec_producer_auth,json=update_actress)
@@ -166,9 +206,7 @@ class CastingAgencyTest(unittest.TestCase):
         new_actress.insert()
         # update the age with a new json update
         update_actress = {
-            'name':'Jennifer Connelly',
-            'age':51,
-            'gender':'Female'
+            'age':51
         }
         # get the id of the actor for the patch
         patched_actress = Actors.query.all()
