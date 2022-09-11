@@ -130,12 +130,60 @@ class CastingAgencyTest(unittest.TestCase):
         delete_actors = Actors.query.all()
         for actor in delete_actors:
             actor.delete()
-            
+
     # failed patch:movies
     # success patch:movies
 
     # failed patch:actors
+    def test_patch_actors_error(self):
+        # add an actress to the table
+        new_actress = Actors(name='Jennifer Connelly',age=50,gender='Female')
+        new_actress.insert()
+        # attempt to update the age with new json
+        update_actress = {
+            'full_name':'Jennifer Connelly',
+            'age':51,
+            'gender':'Female'
+        }
+        # get the id for the patch request
+        patched_actress = Actors.query.all()
+        actress = patched_actress[0]
+        actress_id = actress.id
+        wrong_actress_id = actress_id + 1
+        # attempt to make the patch request
+        res = self.client().patch(f'/actors/{wrong_actress_id}',headers=exec_producer_auth,json=update_actress)
+        # the patch should fail becuase the column name is incorrect
+        self.assertEqual(res.status_code,404)
+        # delete the actress from the database
+        delete_actors = Actors.query.all()
+        for actors in delete_actors:
+            actors.delete()
+    
     # success patch:actors
+    def test_patch_actors_success(self):
+        # add a new actress to the table
+        new_actress = Actors(name='Jennifer Connelly',age=50,gender='Female')
+        new_actress.insert()
+        # update the age with a new json update
+        update_actress = {
+            'name':'Jennifer Connelly',
+            'age':51,
+            'gender':'Female'
+        }
+        # get the id of the actor for the patch
+        patched_actress = Actors.query.all()
+        actress = patched_actress[0]
+        actress_id = actress.id
+        # test the patch request
+        res = self.client().patch(f'/actors/{actress_id}',headers=exec_producer_auth,json=update_actress)
+        data = json.loads(res.data)
+        # make sure it worked
+        self.assertEqual(res.status_code,200)
+        self.assertEqual(data['success'],True)
+        # delete the actress from the table
+        delete_actors = Actors.query.all()
+        for actor in delete_actors:
+            actor.delete()
 
     # failed delete:movies
     # success delete:movies

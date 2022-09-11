@@ -258,8 +258,10 @@ def create_app(test_config=None):
   def edit_actor(payload,id):
     actor_request = request.get_json()
     actor = Actors.query.get(id)
+    if actor is None:
+      abort(404)
 
-    if actor_request.get('name') is not None or actor_request.get('age') is not None or actor_request.get('gender') is not None:
+    if actor_request.get('name') is not None and actor_request.get('age') is not None and actor_request.get('gender') is not None:
       # determine the name
       if actor_request.get('name') is not None:
         actor.name = actor_request.get('name')
@@ -276,7 +278,7 @@ def create_app(test_config=None):
         'id':id
       })
     else:
-      abort(404)
+      abort(400)
 
   #ERROR HANDLERS
   #9/10/22 # used the linked video to build all these handlers #https://learn.udacity.com/nanodegrees/nd0044/parts/cd0037/lessons/905d1c8e-34d6-4d06-aaee-8ee91f041bc2/concepts/8755536a-7966-476b-81ac-063db44c85d4
