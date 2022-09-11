@@ -358,8 +358,37 @@ class CastingAgencyTest(unittest.TestCase):
         for movie in delete_movies:
             movie.delete()
 
-    # Executive Producer Success 1
-    # Executive Producer Success 2
+    # Executive Producer Success on Post Movie
+    def test_exec_producer_success_post_movie(self):
+        new_movie = {
+            'title':'Top Gun: Maverick',
+            'release_date':'2022-05-27'
+        }
+        # post the new movie
+        res = self.client().post('/movies',headers=exec_producer_auth,json=new_movie)
+        # This will pass with 200 code
+        self.assertEqual(res.status_code,200)
+        # delete the movie
+        delete_movies = Movies.query.all()
+        for movie in delete_movies:
+            movie.delete()
+
+    # Executive Producer Success on Delete Movie
+    def test_exec_producer_success_delete_movie(self):
+        # add a movie to be deleted
+        new_movie = Movies(title='Top Gun: Maverick',release_date='2022-05-27')
+        new_movie.insert()
+        # find the id of the movie
+        movies = Movies.query.all()
+        movie_id = movies[0].id
+        # attempt the delete request
+        res = self.client().delete(f'/movies/{movie_id}',headers=exec_producer_auth)
+        # this should pass because the exec producer is allowed to delete movies
+        self.assertEqual(res.status_code,200)
+        # delete the movies
+        delete_movies = Movies.query.all()
+        for movie in delete_movies:
+            movie.delete()
 
 if __name__ == "__main__":
     unittest.main()
