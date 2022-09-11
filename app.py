@@ -15,7 +15,7 @@ load_dotenv('.env')
 #https://dev-dy086z0n.us.auth0.com/authorize?audience=casting&response_type=token&client_id=z1jPPMPtpmyyDmrOFsNsRIH7rdHDdD9x&redirect_uri=http://localhost:8080/login-results
 
 #user_name = os.getenv('user_name')
-database_url = os.environ['DATABASE_URL']#  s.getenv('database')
+database_url = os.environ['DATABASE_URL']#  os.getenv('database')
 domain = os.environ['DOMAIN']#os.getenv('auth_domain')
 api = os.environ['API']#os.getenv('api')
 
