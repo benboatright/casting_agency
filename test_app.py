@@ -262,7 +262,42 @@ class CastingAgencyTest(unittest.TestCase):
             movie.delete()
 
     # failed delete:actors
+    def test_delete_actors_error(self):
+        # create an actress for delete
+        new_actress = Actors(name='Jennifer Connelly',age=51,gender='Female')
+        new_actress.insert()
+        # get the correct id for delete
+        actress = Actors.query.all()
+        actress_id = actress[0].id
+        # make the id wrong, causing a 404 error
+        wrong_id = actress_id + 1
+        # attempt the delete
+        res = self.client().delete(f'/actors/{wrong_id}',headers=exec_producer_auth)
+        # test the failure
+        self.assertEqual(res.status_code,404)
+        # delete the actress from table
+        delete_actors = Actors.query.all()
+        for actor in delete_actors:
+            actor.delete()
+
     # success delete:actors
+    def test_delete_actors_success(self):
+        # insert new actress to delete
+        new_actress = Actors(name='Jennifer Connelly',age=51,gender='Female')
+        new_actress.insert()
+        # find the right id
+        actress = Actors.query.all()
+        actress_id = actress[0].id
+        # make the delete request
+        res = self.client().delete(f'/actors/{actress_id}',headers=exec_producer_auth)
+        data = json.loads(res.data)
+        # check to make sure it was successfully deleted
+        self.assertEqual(res.status_code,200)
+        self.assertEqual(int(data['id']),actress_id)
+        # delete the actress 
+        delete_actors = Actors.query.all()
+        for actor in delete_actors:
+            actor.delete()
 
 if __name__ == "__main__":
     unittest.main()
