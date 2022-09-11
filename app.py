@@ -105,7 +105,7 @@ def create_app(test_config=None):
   setup_db(app,uri)
   CORS(app)
 
-  @app.route('/',methods=['GET']) 
+  @app.route('/initaliaze',methods=['GET']) 
   def test():
     all_actors = Actors.query.all()
     tom_check = 0
