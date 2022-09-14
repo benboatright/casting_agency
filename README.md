@@ -12,7 +12,7 @@ This API has 8 endpoints.
 
 1. GET '/movies'
 - This endpoint retreives the title and release date of all the movies in the movies table.
-- Sample Request: curl https://casting-agency-app-bb.herokuapp.com/movies -H "Authorization: Bearer {auth_token}" (used this article to find how to submit the bear token using curl: https://reqbin.com/req/c-hlt4gkzd/curl-bearer-token-authorization-header-example)
+- Sample Request: ```curl https://casting-agency-app-bb.herokuapp.com/movies -H "Authorization: Bearer {auth_token}"``` (used this article to find how to submit the bear token using curl: https://reqbin.com/req/c-hlt4gkzd/curl-bearer-token-authorization-header-example)
 - Sample Output:
 ```
 [
@@ -24,8 +24,9 @@ This API has 8 endpoints.
 ```
 2. GET '/actors'
 - This endpoint retreives the name, age, and gender of all the acotrs in the actors table.
-- Sample Request: curl https://casting-agency-app-bb.herokuapp.com/actors -H "Authorization: Bearer {auth_token}"
+- Sample Request: ```curl https://casting-agency-app-bb.herokuapp.com/actors -H "Authorization: Bearer {auth_token}"```
 - Sample Output:
+```
 [
     {"age":60,
     "gender":"Male",
@@ -41,58 +42,68 @@ This API has 8 endpoints.
     "success":true
     }
 ]
+```
 3. POST '/movies'
 - This endpoint adds a movie to the movies table. 
-- Sample Request: curl https://casting-agency-app-bb.herokuapp.com/movies -X POST -H "Authorization: Bearer {auth_token}" -H "Content-Type: application/json" -d '{"title":"Top Gun: Maverick","release_date":"2022-05-27"}'
+- Sample Request: ```curl https://casting-agency-app-bb.herokuapp.com/movies -X POST -H "Authorization: Bearer {auth_token}" -H "Content-Type: application/json" -d '{"title":"Top Gun: Maverick","release_date":"2022-05-27"}'```
 - Sample Output:
+```
 {
     "success": true,
     "title": "Top Gun: Maverick",
     "release_date": "2022-05-27"
 }
+```
 4. POST '/actors'
 - This endpoint adds an actor to the actors table.
-- Sample Request: curl https://casting-agency-app-bb.herokuapp.com/actors -X POST -H "Authorization: Bearer {auth_token}" -H "Content-Type: application/json" -d '{"name":"Tom Cruise","age":60,"gender":"male"}'
+- Sample Request: ```curl https://casting-agency-app-bb.herokuapp.com/actors -X POST -H "Authorization: Bearer {auth_token}" -H "Content-Type: application/json" -d '{"name":"Tom Cruise","age":60,"gender":"male"}'```
 - Sample Output:
-{
+```{
     "success":true,
     "name":"Tom Cruise",
     "age":60,
     "gender":"male"
 }
+```
 5. DELETE '/movies/{id}'
 - This endpoint deletes a movie from the movies table given the movie id.
-- Sample Request: curl https://casting-agency-app-bb.herokuapp.com/movies/1 -X DELETE -H "Authorization: Bearer {auth_token}" 
+- Sample Request: ```curl https://casting-agency-app-bb.herokuapp.com/movies/1 -X DELETE -H "Authorization: Bearer {auth_token}" ```
 - Sample Output:
+```
 {
     "success":true,
     "id":1
 }
+```
 6. DELETE '/actors/{id}'
 - This endpoint deletes an actor from the actors table given the actor id.
-- Sample Request: curl https://casting-agency-app-bb.herokuapp.com/actors/1 -X DELETE -H "Authorization: Bearer {auth_token}"
+- Sample Request: ```curl https://casting-agency-app-bb.herokuapp.com/actors/1 -X DELETE -H "Authorization: Bearer {auth_token}"```
 - Sample Output:
+```
 {
     "success":true,
     "id":1
 }
+```
 7. PATCH '/movies'
 - This endpoint allows the user to edit attributes of a specific movie in the movies table given the movie id. 
-- Sample Request: curl https://casting-agency-app-bb.herokuapp.com/movies/1 -X PATCH -H "Authorization: Bearer {auth_token}" -H "Content-Type: application/json" -d '{"title":"Top Gun","release_date":"1986-05-16"}'
+- Sample Request: ```curl https://casting-agency-app-bb.herokuapp.com/movies/1 -X PATCH -H "Authorization: Bearer {auth_token}" -H "Content-Type: application/json" -d '{"title":"Top Gun","release_date":"1986-05-16"}'```
 - Sample Output:
+```
 {
     "success":true,
     "id":1
 }
+```
 8. PATCH '/actors'
 - This endpoint allows the user to edit attributes of a specific actor in the actors table given the actor id.
-- Sample Request: curl https://casting-agency-app-bb.herokuapp.com/actors/1 -X PATCH -H "Authorization: Bearer {auth_token}" -H "Content-Type: application/json" -d '{"name":"Thomas Cruise"}'
+- Sample Request: ```curl https://casting-agency-app-bb.herokuapp.com/actors/1 -X PATCH -H "Authorization: Bearer {auth_token}" -H "Content-Type: application/json" -d '{"name":"Thomas Cruise"}'```
 - Sample Output:
-{
+```{
     "success":true,
     "id":1
 }
-
+```
 
 ## Roles / Authentication
 There are 3 Roles for this API, each with various permissions to access the 8 enpoints mentioned above. The bearer token needed for authorization when testing the various endpoints with each role can be found below.
