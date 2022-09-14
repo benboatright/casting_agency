@@ -14,12 +14,14 @@ This API has 8 endpoints.
 - This endpoint retreives the title and release date of all the movies in the movies table.
 - Sample Request: curl https://casting-agency-app-bb.herokuapp.com/movies -H "Authorization: Bearer {auth_token}" (used this article to find how to submit the bear token using curl: https://reqbin.com/req/c-hlt4gkzd/curl-bearer-token-authorization-header-example)
 - Sample Output:
+```
 [
     {"id": 1,
      "release_date": "Fri, 27 May 2022 00:00:00 GMT",
      "success": true,
      "title": "Top Gun: Maverick"}
 ]
+```
 2. GET '/actors'
 - This endpoint retreives the name, age, and gender of all the acotrs in the actors table.
 - Sample Request: curl https://casting-agency-app-bb.herokuapp.com/actors -H "Authorization: Bearer {auth_token}"
