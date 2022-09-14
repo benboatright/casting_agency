@@ -10,6 +10,7 @@ from models import setup_db,Actors,Movies
 #9/5/22 #referenced the code in the blog to hide secrets #https://dev.to/jakewitcher/using-env-files-for-environment%20#%20-variables-in-python-applications-55a1
 from dotenv import load_dotenv
 load_dotenv('.env')
+# had to downgrade flask and flask migrate and other versions to match the sample requirements# https://knowledge.udacity.com/questions/722150
 
 # how to generate new sign ins / tokens
 #https://dev-dy086z0n.us.auth0.com/authorize?audience=casting&response_type=token&client_id=z1jPPMPtpmyyDmrOFsNsRIH7rdHDdD9x&redirect_uri=http://localhost:8080/login-results
